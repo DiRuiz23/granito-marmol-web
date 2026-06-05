@@ -45,3 +45,5 @@ router.put('/:id', (req, res) => {
 
 // 10. ERROR: Exportación vacía o colgada (dependiendo de tus reglas de formato/estilo)
 module.exports = router;
+
+// prueba de commit con errores
