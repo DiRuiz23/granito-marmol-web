@@ -47,3 +47,5 @@ router.put('/:id', (req, res) => {
 module.exports = router;
 
 // prueba de commit con errores
+
+// segunda prueba de bloqueo
