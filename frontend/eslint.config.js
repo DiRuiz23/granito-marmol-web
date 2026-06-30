@@ -1,23 +1,28 @@
-const js = require("@eslint/js");
-const react = require("eslint-plugin-react");
+import js from "@eslint/js";
+import react from "eslint-plugin-react";
 
-module.exports = [
+export default [
   js.configs.recommended,
   {
+    files: ["**/*.js", "**/*.jsx"],
     plugins: { react },
     languageOptions: {
       ecmaVersion: 2021,
-      sourceType: "commonjs",
+      sourceType: "module",
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
       globals: {
-        require: "readonly",
-        module: "readonly",
-        exports: "readonly",
         console: "readonly",
         Promise: "readonly",
+        window: "readonly",
+        document: "readonly",
       },
     },
     rules: {
-      "no-unused-vars": "error",
+      "no-unused-vars": ["error", { "varsIgnorePattern": "^React$" }],
       "no-var": "error",
       "eqeqeq": "error",
       "no-console": "warn",
