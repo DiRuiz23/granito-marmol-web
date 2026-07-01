@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: granito_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-granito_db}
+      POSTGRES_USER: ${POSTGRES_USER:-granito_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-granito_pass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-granito_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: granito_backend
+    restart: unless-stopped
+    environment:
+      FLASK_ENV: ${FLASK_ENV:-development}
+      FLASK_APP: app
+      DATABASE_URL: postgresql://${POSTGRES_USER:-granito_user}:${POSTGRES_PASSWORD:-granito_pass}@db:5432/${POSTGRES_DB:-granito_db}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key-cambiar-en-produccion}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-jwt-secret-key-cambiar-en-produccion}
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    command: flask run --host=0.0.0.0 --port=5000
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: granito_frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:5000}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
