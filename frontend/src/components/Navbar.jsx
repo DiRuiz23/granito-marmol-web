@@ -34,6 +34,12 @@ const Navbar = () => {
           Cotización
         </NavLink>
         <NavLink 
+          to="/seguridad" 
+          className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+        >
+          Seguridad HTTP
+        </NavLink>
+        <NavLink 
           to="/aviso-privacidad" 
           className={({ isActive }) => isActive ? 'nav-link nav-link-privacy active' : 'nav-link nav-link-privacy'}
         >
