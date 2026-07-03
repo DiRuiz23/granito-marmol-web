@@ -9,6 +9,7 @@ from app.blueprints.cotizacion.estrategias.cocina import CocinaEstrategia
 from app.blueprints.cotizacion.estrategias.bano import BanoEstrategia
 from app.blueprints.cotizacion.estrategias.escalera import EscaleraEstrategia
 from app.blueprints.cotizacion.estrategias.fachada import FachadaEstrategia
+from app.prototypes.registry import listar_plantillas, obtener_plantilla
 
 cotizacion_bp = Blueprint('cotizacion', __name__)
 
@@ -148,3 +149,37 @@ def descargar_pdf(cotizacion_id):
             'message': 'Error al generar el archivo PDF',
             'details': str(e)
         }), 500
+
+
+# ── Prototype Pattern ─────────────────────────────────────────────────────────
+
+@cotizacion_bp.route('/plantillas', methods=['GET'])
+def listar():
+    """
+    Returns the complete catalogue of project templates (Prototype Pattern).
+    The frontend can display these as one-click presets.
+    """
+    try:
+        plantillas = listar_plantillas()
+        return jsonify({'ok': True, 'data': plantillas})
+    except Exception as e:
+        return jsonify({'ok': False, 'message': str(e)}), 500
+
+
+@cotizacion_bp.route('/plantillas/<string:key>', methods=['GET'])
+def clonar_plantilla(key):
+    """
+    Clones the requested template prototype and returns it ready to use.
+    The caller can override any field before submitting to /calcular.
+    """
+    try:
+        plantilla = obtener_plantilla(key)
+        if plantilla is None:
+            return jsonify({
+                'ok': False,
+                'message': f'Plantilla "{key}" no encontrada.'
+            }), 404
+        return jsonify({'ok': True, 'data': plantilla.to_dict()})
+    except Exception as e:
+        return jsonify({'ok': False, 'message': str(e)}), 500
+

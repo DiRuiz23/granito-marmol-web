@@ -48,3 +48,20 @@ export const descargarPDF = async (cotizacionId) => {
   a.remove();
   window.URL.revokeObjectURL(url);
 };
+
+// ── Prototype Pattern ──────────────────────────────────────────────────────
+
+export const listarPlantillas = async () => {
+  const response = await fetch('/api/cotizacion/plantillas');
+  const resData = await response.json();
+  if (!response.ok) throw new Error(resData.message || 'Error al cargar plantillas');
+  return resData.data;
+};
+
+export const obtenerPlantilla = async (key) => {
+  const response = await fetch(`/api/cotizacion/plantillas/${key}`);
+  const resData = await response.json();
+  if (!response.ok) throw new Error(resData.message || 'Plantilla no encontrada');
+  return resData.data;
+};
+

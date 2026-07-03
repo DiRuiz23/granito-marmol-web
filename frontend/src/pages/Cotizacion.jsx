@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { calcularCotizacion, crearCotizacion, descargarPDF } from '../services/cotizacionService';
+import { calcularCotizacion, crearCotizacion, descargarPDF, listarPlantillas } from '../services/cotizacionService';
 
 const Cotizacion = () => {
   // Client default info
@@ -49,6 +49,10 @@ const Cotizacion = () => {
   const [savedQuoteId, setSavedQuoteId] = useState(null);
   const [notification, setNotification] = useState({ type: '', message: '' });
 
+  // Prototype Pattern — project templates
+  const [plantillas, setPlantillas] = useState([]);
+  const [loadingPlantillas, setLoadingPlantillas] = useState(true);
+
   // Reset/Adjust parameters when project type changes
   useEffect(() => {
     if (tipoProyecto === 'escalera') {
@@ -60,6 +64,24 @@ const Cotizacion = () => {
     setSavedQuoteId(null);
     setNotification({ type: '', message: '' });
   }, [tipoProyecto]);
+
+  // Fetch all prototype templates on mount
+  useEffect(() => {
+    listarPlantillas()
+      .then(data => setPlantillas(data || []))
+      .catch(() => setPlantillas([]))
+      .finally(() => setLoadingPlantillas(false));
+  }, []);
+
+  const applyPlantilla = (plantilla) => {
+    setTipoProyecto(plantilla.tipo_proyecto);
+    setMaterialKey(plantilla.material_key);
+    setParams(prev => ({ ...prev, ...plantilla.params }));
+    setResultado(null);
+    setSavedQuoteId(null);
+    showNotification('success', `✓ Plantilla "${plantilla.nombre_plantilla}" aplicada. Ajusta los valores si lo deseas y presiona Calcular.`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleClientChange = (e) => {
     const { name, value } = e.target;
@@ -263,6 +285,44 @@ const Cotizacion = () => {
         
         {/* LEFT COLUMN: Input Form */}
         <div className="glass-card" style={{ padding: '2rem' }}>
+
+          {/* Prototype Pattern — Quick Templates */}
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem', color: 'var(--accent-gold)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span>⚡</span> Plantillas Rápidas
+            </h3>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+              Selecciona una plantilla frecuente para pre-llenar el formulario automáticamente.
+            </p>
+            {loadingPlantillas ? (
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Cargando plantillas...</p>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.6rem' }}>
+                {plantillas.map((p) => (
+                  <button
+                    key={p.key}
+                    type="button"
+                    onClick={() => applyPlantilla(p)}
+                    style={{
+                      textAlign: 'left',
+                      padding: '0.7rem 0.9rem',
+                      borderRadius: '8px',
+                      border: '1px solid var(--border)',
+                      background: 'rgba(197,168,128,0.06)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      color: 'var(--text-primary)'
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent-gold)'; e.currentTarget.style.background = 'rgba(197,168,128,0.12)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'rgba(197,168,128,0.06)'; }}
+                  >
+                    <div style={{ fontWeight: '600', fontSize: '0.82rem', color: 'var(--accent-gold)', marginBottom: '0.2rem' }}>{p.nombre_plantilla}</div>
+                    <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', lineHeight: '1.3' }}>{p.descripcion.slice(0, 70)}...</div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           
           {/* Step 1: Client details */}
           <div style={{ marginBottom: '2rem' }}>
