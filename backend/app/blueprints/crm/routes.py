@@ -1,8 +1,7 @@
-from flask import jsonify
-from app.blueprints.crm import crm_bp
+from flask import Blueprint, jsonify
 
+crm_bp = Blueprint('crm', __name__)
 
-@crm_bp.route("/clientes", methods=["GET"])
-def listar_clientes():
-    # TODO: implementar en issue #14
-    return jsonify({"mensaje": "Blueprint CRM activo", "data": []}), 200
+@crm_bp.route('/', methods=['GET'])
+def index():
+    return jsonify({'ok': True, 'message': 'CRM Blueprint active'})

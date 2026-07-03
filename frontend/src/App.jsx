@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import CRM from './pages/CRM';
 import Inventario from './pages/Inventario';
 import Cotizacion from './pages/Cotizacion';
+import Seguridad from './pages/Seguridad';
 import AvisoPrivacidad from './components/AvisoPrivacidad';
 import './index.css';
 
@@ -17,6 +18,7 @@ function App() {
         <Route path="/crm" element={<CRM />} />
         <Route path="/inventario" element={<Inventario />} />
         <Route path="/cotizacion" element={<Cotizacion />} />
+        <Route path="/seguridad" element={<Seguridad />} />
         <Route path="/aviso-privacidad" element={<AvisoPrivacidad />} />
       </Routes>
     </Router>

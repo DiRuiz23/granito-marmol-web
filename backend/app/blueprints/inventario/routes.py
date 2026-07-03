@@ -1,8 +1,7 @@
-from flask import jsonify
-from app.blueprints.inventario import inventario_bp
+from flask import Blueprint, jsonify
 
+inventario_bp = Blueprint('inventario', __name__)
 
-@inventario_bp.route("/", methods=["GET"])
-def listar_inventario():
-    # TODO: implementar en issue #13
-    return jsonify({"mensaje": "Blueprint inventario activo", "data": []}), 200
+@inventario_bp.route('/', methods=['GET'])
+def index():
+    return jsonify({'ok': True, 'message': 'Inventario Blueprint active'})
