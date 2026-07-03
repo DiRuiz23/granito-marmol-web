@@ -1,5 +1,1 @@
-from flask import Blueprint
-
-crm_bp = Blueprint("crm", __name__)
-
-from app.blueprints.crm import routes  # noqa: E402, F401
+from app.blueprints.crm.routes import crm_bp
