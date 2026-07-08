@@ -19,7 +19,7 @@ const Navbar = () => {
           to="/crm" 
           className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
         >
-          CRM (Clientes)
+          CRM
         </NavLink>
         <NavLink 
           to="/inventario" 
@@ -34,10 +34,22 @@ const Navbar = () => {
           Cotización
         </NavLink>
         <NavLink 
+          to="/pedido-material" 
+          className={({ isActive }) => isActive ? 'nav-link nav-link-pedido active' : 'nav-link nav-link-pedido'}
+        >
+          Pedidos
+        </NavLink>
+        <NavLink 
+          to="/proveedores" 
+          className={({ isActive }) => isActive ? 'nav-link nav-link-proveedor active' : 'nav-link nav-link-proveedor'}
+        >
+          Proveedores
+        </NavLink>
+        <NavLink 
           to="/aviso-privacidad" 
           className={({ isActive }) => isActive ? 'nav-link nav-link-privacy active' : 'nav-link nav-link-privacy'}
         >
-          Aviso de Privacidad
+          Privacidad
         </NavLink>
       </div>
     </nav>
